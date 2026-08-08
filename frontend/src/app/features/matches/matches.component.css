@@ -1,0 +1,81 @@
+.matches-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.create-card {
+  background-color: var(--color-onyx-card);
+  border: 1px solid var(--color-onyx-border);
+  padding: 1.5rem;
+  border-radius: 12px;
+  color: var(--color-text-main);
+}
+
+.create-card h3 {
+  margin-top: 0;
+  color: var(--color-candy-blue);
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--color-onyx-dark);
+  border: 1px solid var(--color-onyx-border);
+  border-radius: 6px;
+  color: var(--color-text-main);
+  margin-bottom: 0.75rem;
+  box-sizing: border-box;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-candy-blue);
+}
+
+.btn-submit {
+  background-color: var(--color-candy-blue);
+  color: #000000;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.match-card {
+  background-color: var(--color-onyx-card);
+  border: 1px solid var(--color-onyx-border);
+  padding: 1.25rem;
+  border-radius: 12px;
+  color: var(--color-text-main);
+  margin-bottom: 1rem;
+}
+
+.match-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.match-details h3 {
+  margin: 0;
+}
+
+.score-badge {
+  background-color: var(--color-onyx-dark);
+  color: var(--color-candy-blue);
+  border: 1px solid var(--color-candy-blue);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
+}
+
+.location-text {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}

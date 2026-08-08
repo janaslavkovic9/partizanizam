@@ -1,1 +1,16 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --color-onyx-dark: #0f1115;
+  --color-onyx-card: #181b20;
+  --color-onyx-border: #282c34;
+  --color-candy-blue: #00d2ff;
+  --color-candy-blue-hover: #00b4dc;
+  --color-text-main: #f0f4f8;
+  --color-text-muted: #8b9bb4;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-onyx-dark);
+  color: var(--color-text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}

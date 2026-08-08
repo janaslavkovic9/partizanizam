@@ -1,0 +1,19 @@
+<div class="matches-page">
+  <div *ngIf="authService.currentUser$ | async" class="create-card">
+    <h3>Dodaj Utakmicu</h3>
+    <input [(ngModel)]="opponent" placeholder="Protivnik (npr. Real Madrid)..." class="input-field" />
+    <input [(ngModel)]="score" placeholder="Rezultat (npr. 88 - 84)..." class="input-field" />
+    <input [(ngModel)]="location" placeholder="Lokacija..." class="input-field" />
+    <button (click)="createMatch()" class="btn-submit">Dodaj Utakmicu</button>
+  </div>
+
+  <div class="matches-list">
+    <div *ngFor="let match of matches" class="match-card">
+      <div class="match-details">
+        <h3>KK Partizan vs {{ match.opponent }}</h3>
+        <span class="score-badge">{{ match.score }}</span>
+      </div>
+      <p class="location-text">{{ match.location }}</p>
+    </div>
+  </div>
+</div>

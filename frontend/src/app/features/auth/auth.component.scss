@@ -1,0 +1,134 @@
+$onyx-bg: #0f0f10;
+$onyx-card: #161618;
+$onyx-input: #1f1f23;
+$onyx-border: #26262a;
+$candy-blue: #00a8ff;
+$candy-blue-hover: #0088cc;
+$text-main: #f0f0f2;
+$text-muted: #8e8e93;
+
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  padding: 20px;
+}
+
+.auth-card {
+  background-color: $onyx-card;
+  border: 1px solid $onyx-border;
+  border-radius: 16px;
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 24px;
+
+    h2 {
+      color: $text-main;
+      margin: 0 0 6px 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    p {
+      color: $text-muted;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  }
+
+  .error-banner {
+    background-color: rgba(255, 77, 77, 0.15);
+    border: 1px solid #ff4d4d;
+    color: #ff4d4d;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      label {
+        color: $text-muted;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      input {
+        background-color: $onyx-input;
+        border: 1px solid $onyx-border;
+        color: $text-main;
+        padding: 12px 14px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: $candy-blue;
+        }
+
+        &::placeholder {
+          color: rgba(142, 142, 147, 0.5);
+        }
+      }
+    }
+
+    .btn-submit {
+      margin-top: 8px;
+      background-color: $candy-blue;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+
+      &:hover {
+        background-color: $candy-blue-hover;
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  .auth-footer {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: $text-muted;
+
+    .btn-toggle {
+      background: none;
+      border: none;
+      color: $candy-blue;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 6px;
+      text-decoration: underline;
+
+      &:hover {
+        color: $candy-blue-hover;
+      }
+    }
+  }
+}

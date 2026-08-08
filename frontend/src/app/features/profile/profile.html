@@ -1,0 +1,42 @@
+<div class="profile-wrapper">
+  @if (currentUser) {
+    <div class="profile-card">
+      <div class="profile-banner"></div>
+      
+      <div class="profile-header">
+        <div class="avatar-container">
+          <div class="avatar-circle">
+            {{ getAvatarInitial() }}
+          </div>
+        </div>
+        
+        <div class="user-info">
+          <h2>{{ currentUser.username }}</h2>
+          <p class="email-text">{{ currentUser.email }}</p>
+          <span class="role-badge">Grobari Član</span>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat-item">
+          <span class="stat-value">Partizanizam</span>
+          <span class="stat-label">Omiljeni Klub</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">Aktivno</span>
+          <span class="stat-label">Status Naloga</span>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <button class="btn-logout" (click)="onLogout()">
+           Odjavi se
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="empty-profile">
+      <p>Niste prijavljeni.</p>
+    </div>
+  }
+</div>

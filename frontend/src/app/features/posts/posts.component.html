@@ -1,0 +1,37 @@
+<div class="posts-container">
+  @if (authService.currentUser$ | async) {
+    <div class="create-post-card">
+      <input [(ngModel)]="title" placeholder="Naslov objave (opciono)..." class="form-input" />
+      <textarea [(ngModel)]="content" placeholder="Šta ima novo, Grobari?..." class="form-textarea" rows="3"></textarea>
+      <input [(ngModel)]="imageUrl" placeholder="Link do slike (opciono)..." class="form-input" />
+      <button (click)="createPost()" class="btn-submit" [disabled]="!content.trim()">Objavi</button>
+    </div>
+  }
+
+  <div class="posts-feed">
+    @for (post of posts; track post.id) {
+      <div class="post-card">
+        @if (post.imageUrl) {
+          <img [src]="post.imageUrl" alt="Objava slika" class="post-image" />
+        }
+        
+        <div class="post-header">
+          @if (post.title) {
+            <h2>{{ post.title }}</h2>
+          }
+          <span>Autor: {{ post.user?.username || 'Anoniman' }}</span>
+        </div>
+
+        <div class="post-content">
+          <p>{{ post.content }}</p>
+        </div>
+
+        @if ((authService.currentUser$ | async)?.id === post.user?.id) {
+          <button (click)="deletePost(post.id)" class="btn-delete" title="Obriši objavu">
+            🗑️ Obriši
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

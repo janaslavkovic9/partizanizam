@@ -1,46 +1,45 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Post } from './post.entity';
-import { User } from '../users/user.entity';
+import { Post } from './entities/post.entity';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post)
-    private readonly postRepository: Repository<Post>,
+    private postsRepository: Repository<Post>,
   ) {}
 
   async findAll(): Promise<Post[]> {
-    return this.postRepository.find({
-      relations: { author: true },
+    return this.postsRepository.find({
+      relations: ['user'],
       order: { createdAt: 'DESC' },
     });
   }
 
-  async findOne(id: string): Promise<Post> {
-    const post = await this.postRepository.findOne({
-      where: { id },
-      relations: { author: true },
+  async create(createPostDto: { content: string }, user: any): Promise<Post> {
+    const newPost = this.postsRepository.create({
+      content: createPostDto.content,
+      user: user,
     });
+    return this.postsRepository.save(newPost);
+  }
+
+  async remove(postId: string, userId: string): Promise<{ message: string }> {
+    const post = await this.postsRepository.findOne({
+      where: { id: postId },
+      relations: ['user'],
+    });
+
     if (!post) {
-      throw new NotFoundException('Objava nije pronađena.');
+      throw new NotFoundException('Objava nije pronađena');
     }
-    return post;
-  }
 
-  async create(title: string, content: string, imageUrl: string, user: User): Promise<Post> {
-    const post = this.postRepository.create({
-      title,
-      content,
-      imageUrl,
-      author: user,
-    });
-    return this.postRepository.save(post);
-  }
+    if (post.user.id !== userId) {
+      throw new UnauthorizedException('Možete brisati samo sopstvene objave');
+    }
 
-  async remove(id: string): Promise<void> {
-    const post = await this.findOne(id);
-    await this.postRepository.remove(post);
+    await this.postsRepository.remove(post);
+    return { message: 'Objava uspešno obrisana' };
   }
 }
