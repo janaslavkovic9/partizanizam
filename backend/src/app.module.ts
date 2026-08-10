@@ -8,6 +8,8 @@ import { MatchesModule } from './matches/matches.module';
 import { User } from './users/user.entity';
 import { Post } from './posts/post.entity';
 import { Match } from './matches/match.entity';
+import { Comment } from './posts/entities/comment.entity';
+import { Like } from './posts/entities/like.entity';
 
 @Module({
   imports: [
@@ -19,8 +21,10 @@ import { Match } from './matches/match.entity';
       username: process.env.DB_USERNAME || 'grobar',
       password: process.env.DB_PASSWORD || 'partizan1945',
       database: process.env.DB_NAME || 'partizanizam_db',
-      entities: [User, Post, Match],
+      entities: [User, Post, Match, Comment, Like],
+      autoLoadEntities: true,
       synchronize: true,
+      dropSchema: true,
     }),
     UsersModule,
     AuthModule,

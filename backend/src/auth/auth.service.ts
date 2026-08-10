@@ -15,7 +15,11 @@ export class AuthService {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    const user = await this.usersService.create(username, email, passwordHash, role);
+    const user = await this.usersService.create({
+  username,
+  email,
+  password : password, 
+});
     const payload = { sub: user.id, email: user.email, role: user.role };
     
     return {

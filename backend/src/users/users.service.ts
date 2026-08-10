@@ -1,8 +1,8 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, UserRole } from './user.entity';
 import * as bcrypt from 'bcrypt';
+import { User, UserRole } from './user.entity';
 
 @Injectable()
 export class UsersService {
@@ -11,27 +11,46 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { email } });
-  }
+  async create(userData: { username: string; email: string; password?: string }): Promise<User> {
+    const { username, email, password } = userData;
 
-  async findById(id: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { id } });
-  }
+    const existingUser = await this.userRepository.findOne({
+      where: [{ email }, { username }],
+    });
 
-  async create(username: string, email: string, passwordHash: string, role: UserRole = UserRole.USER): Promise<User> {
-    const existingUser = await this.findByEmail(email);
     if (existingUser) {
-      throw new ConflictException('Korisnik sa ovim email-om već postoji.');
+      throw new ConflictException('Korisnik sa ovim email-om ili korisničkim imenom već postoji.');
+    }
+
+    let hashedPassword = '';
+    if (password) {
+      const saltRounds = 10;
+      hashedPassword = await bcrypt.hash(password, saltRounds);
     }
 
     const user = this.userRepository.create({
       username,
       email,
-      passwordHash,
-      role,
+      passwordHash: hashedPassword,
+      role: UserRole.USER,
     });
 
     return this.userRepository.save(user);
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  async findById(id: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`Korisnik sa ID-em "${id}" nije pronađen.`);
+    }
+    return user;
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { username } });
   }
 }

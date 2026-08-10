@@ -1,0 +1,119 @@
+$onyx-bg: #161618;
+$onyx-border: #26262a;
+$candy-blue: #00a8ff;
+$candy-blue-hover: #0088cc;
+$text-main: #f0f0f2;
+$text-muted: #8e8e93;
+
+.navbar {
+  background-color: $onyx-bg;
+  border-bottom: 1px solid $onyx-border;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+
+  .nav-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav-brand {
+    text-decoration: none;
+    .brand-text {
+      color: $candy-blue;
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    a {
+      color: $text-muted;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: $text-main;
+      }
+
+      &.active {
+        color: $candy-blue;
+      }
+    }
+
+    .profile-link {
+      .avatar-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #1f1f23;
+        border: 1px solid $onyx-border;
+        padding: 4px 12px 4px 6px;
+        border-radius: 20px;
+        transition: border-color 0.2s ease;
+
+        &:hover {
+          border-color: $candy-blue;
+        }
+
+        .avatar-char {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background-color: $candy-blue;
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 0.85rem;
+        }
+
+        .username {
+          color: $text-main;
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    .btn-logout-nav {
+      background: none;
+      border: 1px solid rgba(255, 77, 77, 0.4);
+      color: #ff4d4d;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: rgba(255, 77, 77, 0.1);
+        border-color: #ff4d4d;
+      }
+    }
+
+    .btn-login-nav {
+      background-color: $candy-blue;
+      color: #fff !important;
+      padding: 6px 16px;
+      border-radius: 8px;
+
+      &:hover {
+        background-color: $candy-blue-hover;
+      }
+    }
+  }
+}
