@@ -18,15 +18,11 @@ export class PostsService {
     return this.http.post<Post>(this.apiUrl, { content });
   }
 
-  deletePost(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  toggleLike(postId: string): Observable<Post> {
+    return this.http.post<Post>(`${this.apiUrl}/${postId}/like`, {});
   }
 
-  toggleLike(postId: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${postId}/like`, {});
-  }
-
-  addComment(postId: string, content: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${postId}/comments`, { content });
+  addComment(postId: string, content: string): Observable<Post> {
+    return this.http.post<Post>(`${this.apiUrl}/${postId}/comments`, { content });
   }
 }

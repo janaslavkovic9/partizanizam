@@ -1,22 +1,20 @@
-import { User } from './user.model';
-
 export interface Comment {
   id: string;
   content: string;
-  user: User;
-  createdAt: Date;
-}
-
-export interface Like {
-  id: string;
-  user: User;
+  username?: string;
+  user?: {
+    username: string;
+  };
+  createdAt: string | Date;
 }
 
 export interface Post {
   id: string;
   content: string;
-  user: User;
+  createdAt: string | Date;
+  user?: {
+    username: string;
+  };
+  likes?: string[];
   comments?: Comment[];
-  likes?: Like[];
-  createdAt: Date;
 }

@@ -13,7 +13,7 @@ export interface AuthResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/auth';
+  private apiUrl = 'http://localhost:3001/auth';
 
   private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();

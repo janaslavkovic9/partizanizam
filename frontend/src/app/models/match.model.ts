@@ -1,11 +1,25 @@
-import { User } from './user.model';
+export interface QuizOption {
+  id: string;
+  text: string;
+}
+
+export interface QuizQuestion {
+  id: string;
+  questionText: string;
+  options: QuizOption[];
+  userAnswerId?: string;
+}
 
 export interface Match {
   id: string;
-  opponent: string;
-  date: Date;
+  homeTeam: string;
+  awayTeam: string;
+  dateTime: Date;
   location: string;
-  ticketLink?: string;
-  description?: string;
-  organizer?: User;
+  status: 'UPCOMING' | 'FINISHED';
+  score?: {
+    home: number;
+    away: number;
+  };
+  quiz?: QuizQuestion[];
 }

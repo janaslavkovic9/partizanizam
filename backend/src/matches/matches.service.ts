@@ -1,48 +1,52 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Match } from './match.entity';
 
 @Injectable()
 export class MatchesService {
-  constructor(
-    @InjectRepository(Match)
-    private readonly matchRepository: Repository<Match>,
-  ) {}
+  private matches: any[] = [
+    {
+      id: '1',
+      homeTeam: 'KK Partizan',
+      awayTeam: 'Real Madrid',
+      dateTime: new Date('2026-10-15T20:30:00'),
+      location: 'Beogradska Arena',
+      score: { home: 88, away: 82 },
+      status: 'FINISHED',
+    },
+    {
+      id: '2',
+      homeTeam: 'Crvena Zvezda',
+      awayTeam: 'KK Partizan',
+      dateTime: new Date('2026-11-02T19:00:00'),
+      location: 'Hala Aleksandar Nikolić',
+      score: null,
+      status: 'UPCOMING',
+    },
+  ];
 
-  async findAll(): Promise<Match[]> {
-    return this.matchRepository.find({
-      order: { matchDate: 'DESC' },
-    });
+  async findAll(): Promise<any[]> {
+    return this.matches;
   }
 
-  async findOne(id: string): Promise<Match> {
-    const match = await this.matchRepository.findOne({ where: { id } });
+  async findOne(id: string): Promise<any> {
+    const match = this.matches.find((m) => m.id === id);
     if (!match) {
-      throw new NotFoundException('Utakmica nije pronađena.');
+      throw new NotFoundException('Utakmica nije pronađena');
     }
     return match;
   }
 
-  async create(
-    opponent: string,
-    score: string,
-    location: string,
-    matchDate: Date,
-    isHomeMatch: boolean,
-  ): Promise<Match> {
-    const match = this.matchRepository.create({
-      opponent,
-      score,
-      location,
-      matchDate,
-      isHomeMatch,
-    });
-    return this.matchRepository.save(match);
-  }
+  async create(matchData: any): Promise<any> {
+    const newMatch = {
+      id: Date.now().toString(),
+      homeTeam: matchData.homeTeam,
+      awayTeam: matchData.awayTeam,
+      dateTime: new Date(matchData.dateTime),
+      location: matchData.location || 'Glavna Arena',
+      score: null,
+      status: 'UPCOMING',
+    };
 
-  async remove(id: string): Promise<void> {
-    const match = await this.findOne(id);
-    await this.matchRepository.remove(match);
+    this.matches.unshift(newMatch);
+    return newMatch;
   }
 }

@@ -1,69 +1,98 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Post } from './post.entity';
-import { Comment } from './entities/comment.entity';
-import { Like } from './entities/like.entity';
-import { User } from '../users/user.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class PostsService {
-  constructor(
-    @InjectRepository(Post) private postsRepository: Repository<Post>,
-    @InjectRepository(Comment) private commentsRepository: Repository<Comment>,
-    @InjectRepository(Like) private likesRepository: Repository<Like>,
-  ) {}
+  private posts: any[] = [
+    {
+      id: '1',
+      content: 'Dobrodošli na mrežu! Ovo je prva zvanična objava.',
+      createdAt: new Date(),
+      user: { id: '101', username: 'OnyxAdmin' },
+      likes: [],
+      comments: [
+        {
+          id: '101',
+          content: 'Sjajan dizajn!',
+          username: 'Korisnik1',
+          createdAt: new Date(),
+        },
+      ],
+    },
+    {
+      id: '2',
+      content: 'Testing Angular + NestJS integracije. Sve radi u realnom vremenu!',
+      createdAt: new Date(),
+      user: { id: '102', username: 'Developer' },
+      likes: [],
+      comments: [],
+    },
+  ];
 
-  async findAll() {
-    return this.postsRepository.find({
-      relations: {
-        user: true,
-        comments: { user: true },
-        likes: { user: true },
+  async findAll(): Promise<any[]> {
+    return this.posts;
+  }
+
+  async create(content: string, user: any): Promise<any> {
+    const newPost = {
+      id: Date.now().toString(),
+      content,
+      createdAt: new Date(),
+      user: {
+        id: user?.id || '1',
+        username: user?.username || 'Korisnik',
       },
-      order: { createdAt: 'DESC' },
-    });
+      likes: [],
+      comments: [],
+    };
+
+    this.posts.unshift(newPost);
+    return newPost;
   }
 
-  async create(content: string, user: User) {
-    const post = this.postsRepository.create({ content, user });
-    return this.postsRepository.save(post);
-  }
+  async toggleLike(postId: string, user: any): Promise<any> {
+    const post = this.posts.find((p) => p.id === postId);
 
-  async remove(id: string, user: User) {
-    const post = await this.postsRepository.findOne({
-      where: { id },
-      relations: { user: true },
-    });
-    if (!post) throw new NotFoundException('Objava nije pronađena.');
-    if (post.user.id !== user.id) throw new UnauthorizedException('Nemate dozvolu za brisanje ove objave.');
-
-    return this.postsRepository.remove(post);
-  }
-
-  async toggleLike(postId: string, user: User) {
-    const post = await this.postsRepository.findOne({ where: { id: postId } });
-    if (!post) throw new NotFoundException('Objava nije pronađena.');
-
-    const existingLike = await this.likesRepository.findOne({
-      where: { post: { id: postId }, user: { id: user.id } },
-    });
-
-    if (existingLike) {
-      await this.likesRepository.remove(existingLike);
-      return { liked: false };
-    } else {
-      const newLike = this.likesRepository.create({ post, user });
-      await this.likesRepository.save(newLike);
-      return { liked: true };
+    if (!post) {
+      throw new NotFoundException('Objava nije pronađena');
     }
+
+    if (!post.likes) {
+      post.likes = [];
+    }
+
+    const userId = user?.id || user;
+    const index = post.likes.findIndex((like: any) =>
+      typeof like === 'string' ? like === userId : like?.id === userId
+    );
+
+    if (index > -1) {
+      post.likes.splice(index, 1);
+    } else {
+      post.likes.push(user);
+    }
+
+    return post;
   }
 
-  async addComment(postId: string, content: string, user: User) {
-    const post = await this.postsRepository.findOne({ where: { id: postId } });
-    if (!post) throw new NotFoundException('Objava nije pronađena.');
+  async addComment(postId: string, content: string, user: any): Promise<any> {
+    const post = this.posts.find((p) => p.id === postId);
 
-    const comment = this.commentsRepository.create({ content, post, user });
-    return this.commentsRepository.save(comment);
+    if (!post) {
+      throw new NotFoundException('Objava nije pronađena');
+    }
+
+    if (!post.comments) {
+      post.comments = [];
+    }
+
+    const newComment = {
+      id: Date.now().toString(),
+      content,
+      username: user?.username || 'Korisnik',
+      createdAt: new Date(),
+    };
+
+    post.comments.push(newComment);
+    return post;
   }
 }
