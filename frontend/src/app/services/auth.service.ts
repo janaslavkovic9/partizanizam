@@ -1,11 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { User } from '../models/user.model';
+import { Observable, tap } from 'rxjs';
 
 export interface AuthResponse {
-  access_token: string;
-  user: User;
+  accessToken: string;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+  };
 }
 
 @Injectable({
@@ -13,41 +16,31 @@ export interface AuthResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3001/auth';
+  private apiUrl = 'http://localhost:3001/auth'; 
 
-  private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
-  public currentUser$ = this.currentUserSubject.asObservable();
-
-  register(userData: any): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
-      tap(res => this.handleAuthSuccess(res))
-    );
-  }
-
-  login(credentials: any): Observable<AuthResponse> {
+  login(credentials: { email: string; password: string }): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(res => this.handleAuthSuccess(res))
+      tap(res => {
+        if (res.accessToken) {
+          localStorage.setItem('token', res.accessToken);
+        }
+      })
     );
   }
 
-  logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user');
-    this.currentUserSubject.next(null);
+  register(userData: { username: string; email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, userData);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('access_token');
+    return localStorage.getItem('token');
   }
 
-  private handleAuthSuccess(res: AuthResponse): void {
-    localStorage.setItem('access_token', res.access_token);
-    localStorage.setItem('user', JSON.stringify(res.user));
-    this.currentUserSubject.next(res.user);
+  isLoggedIn(): boolean {
+    return !!this.getToken();
   }
 
-  private getUserFromStorage(): User | null {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+  logout(): void {
+    localStorage.removeItem('token');
   }
 }

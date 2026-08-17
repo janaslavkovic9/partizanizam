@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NavbarComponent],
   styles: [`
     :host {
       display: block;
@@ -74,6 +75,12 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
       border-color: rgba(0, 210, 255, 0.25);
     }
 
+    .right-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
     .profile-btn {
       width: 40px;
       height: 40px;
@@ -103,17 +110,16 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   template: `
     <header class="navbar-container">
       <div class="navbar-content">
-        <!-- Logo skroz levo -->
         <a routerLink="/posts" class="brand-title">PARTIZANIZAM</a>
 
-        <!-- Linkovi centrirani u sredini -->
         <nav class="nav-links">
           <a routerLink="/posts" routerLinkActive="active" class="nav-link-custom">Objave</a>
           <a routerLink="/matches" routerLinkActive="active" class="nav-link-custom">Utakmice</a>
         </nav>
 
-        <!-- Profilna ikonica skroz desno -->
-        <div>
+        <div class="right-actions">
+          <app-navbar></app-navbar>
+
           <a routerLink="/profile" routerLinkActive="active" class="profile-btn" title="Moj Profil">
             <i class="bi bi-person-fill fs-5"></i>
           </a>

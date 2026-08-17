@@ -1,15 +1,16 @@
 
+
 services:
   postgres:
-    image: postgres:15-alpine
-    container_name: partizanizam_db
+    image: postgres:16-alpine
+    container_name: partizanizam_postgres
     restart: always
     environment:
-      POSTGRES_USER: grobar
-      POSTGRES_PASSWORD: partizan1945
+      POSTGRES_USER: partizan_user
+      POSTGRES_PASSWORD: partizan_password
       POSTGRES_DB: partizanizam_db
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
