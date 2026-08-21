@@ -1,0 +1,297 @@
+$onyx-bg: #0f0f10;
+$onyx-card: #161618;
+$onyx-border: #26262a;
+$onyx-input: #1f1f23;
+$candy-blue: #00a8ff;
+$candy-blue-hover: #0088cc;
+$text-main: #f0f0f2;
+$text-muted: #8e8e93;
+
+.profile-wrapper {
+  max-width: 520px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+.profile-card {
+  background-color: $onyx-card;
+  border: 1px solid $onyx-border;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.profile-banner {
+  height: 110px;
+  background: linear-gradient(135deg, #0d1117 0%, rgba(0, 168, 255, 0.4) 100%);
+  border-bottom: 1px solid $onyx-border;
+}
+
+.profile-header {
+  padding: 0 24px 16px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: -48px;
+
+  .avatar-container {
+    margin-bottom: 12px;
+
+    .avatar-circle, .avatar-img {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background-color: $onyx-card;
+      border: 4px solid $onyx-card;
+      box-shadow: 0 0 20px rgba(0, 168, 255, 0.25);
+    }
+
+    .avatar-circle {
+      color: $candy-blue;
+      font-size: 2.2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-img {
+      object-fit: cover;
+    }
+  }
+
+  .user-info {
+    width: 100%;
+
+    h2 {
+      margin: 0;
+      color: $text-main;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .email-text {
+      margin: 4px 0 8px;
+      color: $text-muted;
+      font-size: 0.85rem;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background-color: rgba(0, 168, 255, 0.12);
+      color: $candy-blue;
+      border: 1px solid rgba(0, 168, 255, 0.3);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .bio-text {
+      margin: 8px 0 0;
+      color: $text-muted;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+  }
+}
+
+.edit-section {
+  padding: 0 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+
+    label {
+      font-size: 0.8rem;
+      color: $candy-blue;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 10px 14px;
+      background-color: $onyx-input;
+      border: 1px solid $onyx-border;
+      border-radius: 8px;
+      color: $text-main;
+      font-size: 0.9rem;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      &:focus {
+        border-color: $candy-blue;
+        box-shadow: 0 0 8px rgba(0, 168, 255, 0.2);
+      }
+    }
+
+    textarea.input-field {
+      resize: vertical;
+      min-height: 70px;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+}
+
+.profile-actions {
+  padding: 16px 24px 24px;
+  display: flex;
+  gap: 12px;
+  border-top: 1px solid $onyx-border;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &-edit {
+    background-color: transparent;
+    border: 1px solid $candy-blue;
+    color: $candy-blue;
+
+    &:hover {
+      background-color: rgba(0, 168, 255, 0.1);
+      box-shadow: 0 0 10px rgba(0, 168, 255, 0.2);
+    }
+  }
+
+  &-save {
+    background-color: $candy-blue;
+    color: #050b14;
+
+    &:hover {
+      background-color: $candy-blue-hover;
+      box-shadow: 0 0 12px rgba(0, 168, 255, 0.3);
+    }
+  }
+
+  &-cancel {
+    background-color: $onyx-input;
+    border: 1px solid $onyx-border;
+    color: $text-main;
+
+    &:hover {
+      background-color: $onyx-border;
+    }
+  }
+
+  &-logout {
+    background-color: transparent;
+    border: 1px solid #ff4d4d;
+    color: #ff4d4d;
+
+    &:hover {
+      background-color: rgba(255, 77, 77, 0.1);
+    }
+  }
+}
+
+.empty-profile {
+  text-align: center;
+  color: $text-muted;
+  padding: 40px;
+}
+
+.auth-card {
+  background-color: $onyx-card;
+  border: 1px solid $onyx-border;
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+
+  .auth-tabs {
+    display: flex;
+    margin-bottom: 24px;
+    border-bottom: 1px solid $onyx-border;
+
+    button {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: $text-muted;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.active {
+        color: $candy-blue;
+        border-bottom-color: $candy-blue;
+      }
+    }
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    h2 {
+      margin: 0 0 8px;
+      color: $text-main;
+      font-size: 1.3rem;
+      text-align: center;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      label {
+        font-size: 0.8rem;
+        color: $candy-blue;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .input-field {
+        width: 100%;
+        padding: 10px 14px;
+        background-color: $onyx-input;
+        border: 1px solid $onyx-border;
+        border-radius: 8px;
+        color: $text-main;
+        font-size: 0.9rem;
+        outline: none;
+        box-sizing: border-box;
+
+        &:focus {
+          border-color: $candy-blue;
+          box-shadow: 0 0 8px rgba(0, 168, 255, 0.2);
+        }
+      }
+    }
+  }
+}

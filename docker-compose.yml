@@ -6,13 +6,13 @@ services:
     container_name: partizanizam_postgres
     restart: always
     environment:
-      POSTGRES_USER: partizan_user
-      POSTGRES_PASSWORD: partizan_password
-      POSTGRES_DB: partizanizam_db
+      POSTGRES_USER: grobar
+      POSTGRES_PASSWORD: grobar
+      POSTGRES_DB: partizanizam
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - partizanizam_pgdata:/var/lib/postgresql/data
 
 volumes:
-  pgdata:
+  partizanizam_pgdata:

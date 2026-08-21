@@ -1,84 +1,86 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/post.model';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
-  styles: [`
-    :host {
-      display: block;
-      width: 100%;
-      min-height: 100vh;
-      background-color: #0b0c10;
-      color: #e2e8f0;
-      padding: 30px 16px;
-      box-sizing: border-box;
-    }
-    .profile-container {
-      max-width: 680px;
-      margin: 0 auto;
-    }
-    .profile-card {
-      background-color: #161920;
-      border: 1px solid #2a2e39;
-      border-radius: 14px;
-      padding: 24px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background-color: #0f1115;
-      border: 2px solid #00D2FF;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px auto;
-      color: #00D2FF;
-      font-size: 2.5rem;
-    }
-    .stat-card {
-      background-color: #0f1115;
-      border: 1px solid #2a2e39;
-      border-radius: 10px;
-      padding: 12px;
-      text-align: center;
-    }
-  `],
-  template: `
-    <div class="profile-container">
-      <div class="profile-card">
-        <div class="avatar">
-          <i class="bi bi-person-fill"></i>
-        </div>
-        <h4 class="fw-bold text-white mb-1">Korisničko Ime</h4>
-        <p class="text-muted mb-3" style="font-size: 0.9rem;">navijac&#64;partizanizam.rs</p>
-
-        <div class="row g-2 mt-2">
-          <div class="col-4">
-            <div class="stat-card">
-              <div class="fw-bold text-white fs-5">12</div>
-              <div class="text-muted" style="font-size: 0.75rem;">Objava</div>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="stat-card">
-              <div class="fw-bold text-white fs-5">48</div>
-              <div class="text-muted" style="font-size: 0.75rem;">Lajkova</div>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="stat-card">
-              <div class="fw-bold text-white fs-5">5</div>
-              <div class="text-muted" style="font-size: 0.75rem;">Utakmica</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `
+  imports: [CommonModule, FormsModule],
+  templateUrl: './profile.component.html',
+  styleUrl: './profile.component.scss'
 })
-export class ProfileComponent {}
+export class ProfileComponent implements OnInit {
+  public authService = inject(AuthService);
+  private router = inject(Router);
+
+  currentUser: User | null = null;
+  isEditing: boolean = false;
+  isLoginTab: boolean = true;
+
+  username: string = '';
+  bio: string = '';
+  avatarUrl: string = '';
+
+  loginEmail: string = '';
+  loginPassword: string = '';
+  regUsername: string = '';
+  regEmail: string = '';
+  regPassword: string = '';
+
+  ngOnInit(): void {
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUser = user;
+      if (user) {
+        this.username = user.username || '';
+        this.bio = user.bio || '';
+        this.avatarUrl = user.avatarUrl || '';
+      }
+    });
+  }
+
+  toggleEdit(): void {
+    this.isEditing = !this.isEditing;
+    if (this.isEditing && this.currentUser) {
+      this.username = this.currentUser.username || '';
+      this.bio = this.currentUser.bio || '';
+      this.avatarUrl = this.currentUser.avatarUrl || '';
+    }
+  }
+
+  saveProfile(): void {
+    if (this.currentUser) {
+      this.currentUser.username = this.username;
+      this.currentUser.bio = this.bio;
+      this.currentUser.avatarUrl = this.avatarUrl;
+    }
+    this.isEditing = false;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.currentUser = null;
+  }
+
+  onLogin(): void {
+    if (!this.loginEmail || !this.loginPassword) return;
+    this.authService.login({ email: this.loginEmail.trim(), password: this.loginPassword }).subscribe({
+      next: () => this.router.navigate(['/posts']),
+      error: (err) => console.error('Greška pri prijavi:', err)
+    });
+  }
+
+  onRegister(): void {
+    if (!this.regUsername || !this.regEmail || !this.regPassword) return;
+    this.authService.register({ 
+      username: this.regUsername.trim(), 
+      email: this.regEmail.trim(), 
+      password: this.regPassword 
+    }).subscribe({
+      next: () => this.router.navigate(['/posts']),
+      error: (err) => console.error('Greška pri registraciji:', err)
+    });
+  }
+}

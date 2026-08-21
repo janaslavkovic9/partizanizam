@@ -1,4 +1,4 @@
-import { Controller, Get, Post as HttpPost, Body, Param, Request } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
 import { MatchesService } from './matches.service';
 
 @Controller('matches')
@@ -10,13 +10,13 @@ export class MatchesController {
     return this.matchesService.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.matchesService.findOne(id);
+  @Post()
+  async create(@Body() createMatchDto: any) {
+    return this.matchesService.create(createMatchDto);
   }
 
-  @HttpPost()
-  async create(@Body() matchData: any) {
-    return this.matchesService.create(matchData);
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return this.matchesService.remove(id);
   }
 }

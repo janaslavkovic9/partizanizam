@@ -8,8 +8,14 @@ export class Post {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
+  title?: string;
+
+  @Column({ nullable: true })
   content: string;
+
+  @Column({ nullable: true })
+  imageUrl?: string;
 
   @CreateDateColumn()
   createdAt: Date;

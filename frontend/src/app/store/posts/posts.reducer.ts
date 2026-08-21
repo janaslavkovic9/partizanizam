@@ -39,6 +39,11 @@ export const postsReducer = createReducer(
     posts: [post, ...state.posts],
   })),
 
+  on(PostsActions.deletePostSuccess, (state, { id }): PostsState => ({
+    ...state,
+    posts: state.posts.filter((p) => p.id !== id),
+  })),
+
   on(PostsActions.toggleLikeSuccess, (state, { post }): PostsState => ({
     ...state,
     posts: state.posts.map((p) => (p.id === post.id ? post : p)),

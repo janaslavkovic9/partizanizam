@@ -1,13 +1,27 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
 import { AppNotification } from '../../models/notification.model';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   styles: [`
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      background-color: #161920;
+      padding: 10px 20px;
+      border-bottom: 1px solid #2a2e39;
+    }
+    .right-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
     .notif-wrapper {
       position: relative;
     }
@@ -20,12 +34,11 @@ import { AppNotification } from '../../models/notification.model';
       color: #00D2FF;
       display: flex;
       align-items: center;
-      justify-content: justify;
-      align-items: center;
       justify-content: center;
       cursor: pointer;
       position: relative;
       transition: all 0.2s ease;
+      text-decoration: none;
     }
     .btn-icon:hover {
       border-color: #00D2FF;
@@ -70,27 +83,31 @@ import { AppNotification } from '../../models/notification.model';
     }
   `],
   template: `
-    <div class="notif-wrapper">
-      <button class="btn-icon" (click)="toggleDropdown()" title="Obaveštenja">
-        <i class="bi bi-bell-fill fs-5"></i>
-        <span *ngIf="unreadCount > 0" class="badge-count">{{ unreadCount }}</span>
-      </button>
+    <div class="nav-container">
+      <div class="right-controls">
+        <div class="notif-wrapper">
+          <button class="btn-icon" (click)="toggleDropdown()" title="Obaveštenja">
+            <i class="bi bi-bell-fill fs-5"></i>
+            <span *ngIf="unreadCount > 0" class="badge-count">{{ unreadCount }}</span>
+          </button>
 
-      <div *ngIf="showDropdown" class="dropdown-menu-custom">
-        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary">
-          <span class="fw-bold text-white" style="font-size: 0.9rem;">Obaveštenja</span>
-          <button class="btn btn-sm btn-link text-info p-0" style="font-size: 0.75rem; text-decoration: none;" (click)="markRead()">Označi sve pročitano</button>
-        </div>
+          <div *ngIf="showDropdown" class="dropdown-menu-custom">
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary">
+              <span class="fw-bold text-white" style="font-size: 0.9rem;">Obaveštenja</span>
+              <button class="btn btn-sm btn-link text-info p-0" style="font-size: 0.75rem; text-decoration: none;" (click)="markRead()">Označi sve pročitano</button>
+            </div>
 
-        <div *ngIf="notifications.length === 0" class="text-muted text-center py-3" style="font-size: 0.85rem;">
-          Nemate novih obaveštenja.
-        </div>
+            <div *ngIf="notifications.length === 0" class="text-muted text-center py-3" style="font-size: 0.85rem;">
+              Nemate novih obaveštenja.
+            </div>
 
-        <div *ngFor="let n of notifications" class="notif-item" [ngClass]="{ 'unread': !n.read }">
-          <div class="fw-bold text-white" style="font-size: 0.85rem;">{{ n.title }}</div>
-          <div class="text-muted" style="font-size: 0.8rem;">{{ n.message }}</div>
-          <div class="text-end text-secondary mt-1" style="font-size: 0.65rem;">
-            {{ n.timestamp | date:'HH:mm' }}
+            <div *ngFor="let n of notifications" class="notif-item" [ngClass]="{ 'unread': !n.read }">
+              <div class="fw-bold text-white" style="font-size: 0.85rem;">{{ n.title }}</div>
+              <div class="text-muted" style="font-size: 0.8rem;">{{ n.message }}</div>
+              <div class="text-end text-secondary mt-1" style="font-size: 0.65rem;">
+                {{ n.timestamp | date:'HH:mm' }}
+              </div>
+            </div>
           </div>
         </div>
       </div>

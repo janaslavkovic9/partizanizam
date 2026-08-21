@@ -5,6 +5,7 @@ export class PostsService {
   private posts: any[] = [
     {
       id: '1',
+      title: 'Dobrodošlica',
       content: 'Dobrodošli na mrežu! Ovo je prva zvanična objava.',
       createdAt: new Date(),
       user: { id: '101', username: 'OnyxAdmin' },
@@ -13,13 +14,15 @@ export class PostsService {
         {
           id: '101',
           content: 'Sjajan dizajn!',
-          username: 'Korisnik1',
+          username: 'Gost',
+          user: { id: '102', username: 'Gost' },
           createdAt: new Date(),
         },
       ],
     },
     {
       id: '2',
+      title: 'Testiranje',
       content: 'Testing Angular + NestJS integracije. Sve radi u realnom vremenu!',
       createdAt: new Date(),
       user: { id: '102', username: 'Developer' },
@@ -32,14 +35,22 @@ export class PostsService {
     return this.posts;
   }
 
-  async create(content: string, user: any): Promise<any> {
+  async create(createPostDto: any, user: any): Promise<any> {
+    const content = typeof createPostDto === 'string' ? createPostDto : createPostDto?.content;
+    const title = createPostDto?.title || undefined;
+    const imageUrl = createPostDto?.imageUrl || undefined;
+
+    const author = user || createPostDto?.user;
+
     const newPost = {
       id: Date.now().toString(),
+      title,
       content,
+      imageUrl,
       createdAt: new Date(),
       user: {
-        id: user?.id || '1',
-        username: user?.username || 'Korisnik',
+        id: author?.id || author?.sub || Date.now().toString(),
+        username: author?.username || author?.name || author?.email || 'Korisnik',
       },
       likes: [],
       comments: [],
@@ -68,13 +79,13 @@ export class PostsService {
     if (index > -1) {
       post.likes.splice(index, 1);
     } else {
-      post.likes.push(user);
+      post.likes.push(user || { id: userId });
     }
 
     return post;
   }
 
-  async addComment(postId: string, content: string, user: any): Promise<any> {
+  async addComment(postId: string, commentData: any, user: any): Promise<any> {
     const post = this.posts.find((p) => p.id === postId);
 
     if (!post) {
@@ -85,10 +96,17 @@ export class PostsService {
       post.comments = [];
     }
 
+    const content = typeof commentData === 'string' ? commentData : commentData?.content;
+    const author = user || commentData?.user;
+
     const newComment = {
       id: Date.now().toString(),
       content,
-      username: user?.username || 'Korisnik',
+      username: author?.username || 'Korisnik',
+      user: {
+        id: author?.id || author?.sub || Date.now().toString(),
+        username: author?.username || 'Korisnik',
+      },
       createdAt: new Date(),
     };
 

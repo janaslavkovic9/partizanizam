@@ -1,38 +1,42 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface Comment {
-  id: string;
-  author: string;
-  text: string;
-  createdAt: Date;
-}
-
-export interface Post {
-  id: string;
-  title: string;
-  content: string;
-  likesCount: number;
-  isLiked?: boolean;
-  comments: Comment[];
-}
+import { Post } from '../models/post.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3001/api/posts'; 
+  private authService = inject(AuthService);
+  private apiUrl = 'http://localhost:3001/posts';
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
   getPosts(): Observable<Post[]> {
-    return this.http.get<Post[]>(this.apiUrl);
+    return this.http.get<Post[]>(this.apiUrl, { headers: this.getAuthHeaders() });
   }
 
-  likePost(postId: string): Observable<{ likesCount: number; isLiked: boolean }> {
-    return this.http.post<{ likesCount: number; isLiked: boolean }>(`${this.apiUrl}/${postId}/like`, {});
+  createPost(postData: { title?: string; content: string; imageUrl?: string }): Observable<Post> {
+    return this.http.post<Post>(this.apiUrl, postData, { headers: this.getAuthHeaders() });
   }
 
-  addComment(postId: string, text: string): Observable<Comment> {
-    return this.http.post<Comment>(`${this.apiUrl}/${postId}/comments`, { text });
+  deletePost(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() });
+  }
+
+  likePost(id: string): Observable<Post> {
+    return this.http.post<Post>(`${this.apiUrl}/${id}/like`, {}, { headers: this.getAuthHeaders() });
+  }
+
+  addComment(postId: string, content: string): Observable<Post> {
+    return this.http.post<Post>(`${this.apiUrl}/${postId}/comments`, { content }, { headers: this.getAuthHeaders() });
   }
 }

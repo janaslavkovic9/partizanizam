@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { Match } from '../../../models/match.model';
@@ -18,7 +19,7 @@ interface CalendarDay {
 @Component({
   selector: 'app-match-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatchQuizModalComponent],
+  imports: [CommonModule, FormsModule, RouterModule, MatchQuizModalComponent],
   styles: [`
     :host {
       display: block;
@@ -112,6 +113,25 @@ interface CalendarDay {
       overflow: hidden;
       white-space: nowrap;
     }
+    .btn-map-link {
+      background-color: rgba(0, 210, 255, 0.15);
+      color: #00D2FF;
+      border: 1px solid #00D2FF;
+      border-radius: 4px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 4px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: all 0.2s ease;
+    }
+    .btn-map-link:hover {
+      background-color: #00D2FF;
+      color: #0b0c10;
+    }
     .input-custom {
       background-color: #0f1115;
       border: 1px solid #2a2e39;
@@ -179,8 +199,18 @@ interface CalendarDay {
               <div class="day-number">{{ day.date.getDate() }}</div>
               
               <div *ngIf="day.matches.length > 0" class="d-flex flex-column gap-1">
-                <div *ngFor="let m of day.matches" class="match-badge">
-                  🏀 {{ m.homeTeam }}
+                <div *ngFor="let m of day.matches" class="d-flex flex-column gap-1">
+                  <div class="match-badge">
+                    🏀 {{ m.homeTeam }}
+                  </div>
+                  <a 
+                    [routerLink]="['/map']" 
+                    [queryParams]="{ matchId: m.id }" 
+                    class="btn-map-link"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <i class="bi bi-geo-alt-fill"></i> Gde gledati?
+                  </a>
                 </div>
               </div>
             </div>

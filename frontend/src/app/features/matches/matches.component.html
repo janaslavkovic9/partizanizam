@@ -1,19 +1,100 @@
-<div class="matches-page">
-  <div *ngIf="authService.currentUser$ | async" class="create-card">
-    <h3>Dodaj Utakmicu</h3>
-    <input [(ngModel)]="opponent" placeholder="Protivnik (npr. Real Madrid)..." class="input-field" />
-    <input [(ngModel)]="score" placeholder="Rezultat (npr. 88 - 84)..." class="input-field" />
-    <input [(ngModel)]="location" placeholder="Lokacija..." class="input-field" />
-    <button (click)="createMatch()" class="btn-submit">Dodaj Utakmicu</button>
+<div class="matches-container">
+  
+  <!-- Form za zakazivanje -->
+  <div class="card schedule-card">
+    <h3>Zakazi utakmicu</h3>
+
+    <div class="form-group">
+      <label>Protivnik</label>
+      <input type="text" [(ngModel)]="opponent" placeholder="npr. Real Madrid" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Datum</label>
+        <input type="date" [(ngModel)]="date" />
+      </div>
+
+      <div class="form-group">
+        <label>Vreme</label>
+        <input type="time" [(ngModel)]="time" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Lokacija (Hala)</label>
+        <input type="text" [(ngModel)]="location" placeholder="npr. Beogradska Arena" />
+      </div>
+
+      <div class="form-group">
+        <label>Takmicenje</label>
+        <input type="text" [(ngModel)]="competition" placeholder="npr. Evroliga" />
+      </div>
+    </div>
+
+    <!-- Mesto gledanja / Kafić -->
+    <div class="form-group">
+      <label>Kafic / Mesto gledanja utakmice</label>
+      <input type="text" [(ngModel)]="cafeName" placeholder="Npr. Pivnica Partizanizam" />
+    </div>
+
+    <div class="map-picker-row">
+      <button type="button" class="btn-map" (click)="openMapModal()">
+        📍 {{ selectedLat ? 'Lokacija izabrana na mapi' : 'Izaberi lokaciju kafica na mapi' }}
+      </button>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label>
+        <input type="checkbox" [(ngModel)]="isHome" />
+        Domaci teren
+      </label>
+    </div>
+
+    <p class="error-text" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button class="btn-submit" (click)="scheduleMatch()">Zakazi</button>
   </div>
 
+  <!-- Lista utakmica -->
   <div class="matches-list">
-    <div *ngFor="let match of matches" class="match-card">
-      <div class="match-details">
-        <h3>KK Partizan vs {{ match.opponent }}</h3>
-        <span class="score-badge">{{ match.score }}</span>
+    <h3>Predstojece utakmice</h3>
+
+    <div class="match-card" *ngFor="let match of matches">
+      <div class="match-info">
+        <span class="badge">{{ match.competition }}</span>
+        <h4>Partizan vs {{ match.opponent }}</h4>
+        <p>📅 {{ match.date }} u {{ match.time }}h</p>
+        <p>📍 {{ match.location }} ({{ match.isHome ? 'Kod kuce' : 'U gostima' }})</p>
+
+        <div class="cafe-info" *ngIf="match.cafeName">
+          🍺 Gledanje u: <strong>{{ match.cafeName }}</strong>
+          <a *ngIf="match.lat && match.lng" 
+             [href]="'https://www.google.com/maps?q=' + match.lat + ',' + match.lng" 
+             target="_blank" 
+             class="map-link">
+             Otveri u Google Maps 🗺️
+          </a>
+        </div>
       </div>
-      <p class="location-text">{{ match.location }}</p>
+
+      <div class="match-actions">
+        <button class="btn-delete" (click)="deleteMatch(match.id)">🗑️ Obrisi</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-backdrop" *ngIf="showMapModal">
+  <div class="modal-content">
+    <h4>Kliknite na mapu da izaberete kafic</h4>
+    <div id="picker-map" style="height: 350px; width: 100%; border-radius: 8px;"></div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeMapModal()">Otkazi</button>
+      <button class="btn-confirm" (click)="confirmLocation()" [disabled]="!selectedLat">Potvrdi lokaciju</button>
     </div>
   </div>
 </div>

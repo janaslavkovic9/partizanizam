@@ -1,107 +1,384 @@
-.posts-container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 20px;
-}
+// TEMA: Onyx & Candy Blue
+$bg-dark: #0f1115;
+$bg-card: #181b20;
+$bg-card-hover: #1f232b;
+$border-color: #2a2e37;
 
-.create-post-card {
-  background-color: #121212;
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 24px;
+$candy-blue: #00a8ff;
+$candy-blue-hover: #0088cc;
+$candy-blue-glow: rgba(0, 168, 255, 0.25);
+
+$text-light: #f1f5f9;
+$text-muted: #94a3b8;
+
+.feed-container {
+  max-width: 680px;
+  margin: 2rem auto;
+  padding: 0 1rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: $text-light;
+}
 
-  .form-input, .form-textarea {
-    width: 100%;
-    background-color: #1a1a1a;
-    border: 1px solid #333;
+/* CREATE CARD */
+.create-card {
+  background: $bg-card;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  border: 1px solid $border-color;
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    border-color: $candy-blue;
+    box-shadow: 0 0 20px $candy-blue-glow;
+  }
+}
+
+.create-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  .user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $candy-blue, #0055ff);
     color: #fff;
-    padding: 10px;
-    border-radius: 6px;
-    box-sizing: border-box;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px $candy-blue-glow;
+  }
+
+  .header-title {
+    h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: $text-light;
+      font-weight: 600;
+    }
+    .user-handle {
+      font-size: 0.8rem;
+      color: $text-muted;
+    }
+  }
+}
+
+.create-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .input-title {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid $border-color;
+    padding: 0.5rem 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    outline: none;
+    color: $text-light;
+
+    &::placeholder {
+      color: $text-muted;
+      font-weight: 400;
+    }
 
     &:focus {
-      outline: none;
-      border-color: #0088cc;
+      border-color: $candy-blue;
     }
   }
+
+  .input-content {
+    background: transparent;
+    border: none;
+    resize: none;
+    outline: none;
+    font-size: 0.95rem;
+    color: $text-light;
+    line-height: 1.5;
+
+    &::placeholder {
+      color: $text-muted;
+    }
+  }
+
+  .input-image-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #111418;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px dashed $border-color;
+
+    .icon {
+      font-size: 0.9rem;
+    }
+
+    .input-image {
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      font-size: 0.85rem;
+      color: $text-light;
+
+      &::placeholder {
+        color: $text-muted;
+      }
+    }
+  }
+
+  .image-preview {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    max-height: 200px;
+    border: 1px solid $border-color;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .btn-remove-img {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+  }
+}
+
+.create-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid $border-color;
 
   .btn-submit {
-    align-self: flex-end;
-    background-color: #0088cc;
-    color: white;
+    background: $candy-blue;
+    color: #fff;
     border: none;
-    padding: 8px 18px;
-    border-radius: 6px;
+    padding: 0.55rem 1.4rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
     cursor: pointer;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-shadow: 0 0 12px $candy-blue-glow;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: $candy-blue-hover;
+      transform: translateY(-1px);
+    }
 
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
+      box-shadow: none;
     }
   }
 }
 
-.posts-feed {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
+/* POST CARD */
 .post-card {
-  background-color: #121212;
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  padding: 16px;
-  color: #fff;
-
-  .post-image {
-    width: 100%;
-    max-height: 350px;
-    object-fit: cover;
-    border-radius: 6px;
-    margin-bottom: 12px;
-  }
+  background: $bg-card;
+  border-radius: 16px;
+  padding: 1.25rem;
+  border: 1px solid $border-color;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
   .post-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
 
-    h2 {
-      margin: 0;
-      font-size: 1.2rem;
-      color: #0088cc;
+    .author-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+
+      .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #252a34;
+        color: $candy-blue;
+        border: 1px solid $border-color;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+      }
+
+      .info {
+        display: flex;
+        flex-direction: column;
+
+        .username {
+          font-weight: 600;
+          color: $text-light;
+          font-size: 0.9rem;
+        }
+
+        .date {
+          font-size: 0.75rem;
+          color: $text-muted;
+        }
+      }
     }
 
-    span {
-      font-size: 0.85rem;
-      color: #888;
+    .btn-delete {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 0.3rem 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      opacity: 0.7;
+
+      &:hover {
+        opacity: 1;
+        background: rgba(255, 77, 77, 0.15);
+      }
     }
   }
 
-  .post-content p {
-    margin: 8px 0;
-    line-height: 1.5;
+  .post-body {
+    .post-title {
+      margin: 0 0 0.4rem 0;
+      font-size: 1.1rem;
+      color: $candy-blue;
+    }
+
+    .post-text {
+      margin: 0 0 0.75rem 0;
+      color: #cbd5e1;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .post-media {
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 0.75rem;
+      border: 1px solid $border-color;
+
+      img {
+        width: 100%;
+        max-height: 380px;
+        object-fit: cover;
+      }
+    }
   }
 
-  .btn-delete {
-    margin-top: 10px;
-    background: transparent;
-    border: 1px solid #ff4d4d;
-    color: #ff4d4d;
-    padding: 4px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.85rem;
+  .post-footer {
+    padding-top: 0.5rem;
 
-    &:hover {
-      background-color: rgba(255, 77, 77, 0.1);
+    .action-btn {
+      background: #21252d;
+      border: 1px solid $border-color;
+      padding: 0.4rem 0.8rem;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+      color: $text-light;
+      transition: all 0.2s;
+
+      &:hover {
+        background: $candy-blue;
+        color: #fff;
+        border-color: $candy-blue;
+      }
+    }
+  }
+
+  .comments-container {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid $border-color;
+
+    .comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+
+      .comment-bubble {
+        background: #111418;
+        padding: 0.5rem 0.75rem;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        border: 1px solid #1f232b;
+
+        .comment-author {
+          font-weight: 600;
+          margin-right: 0.3rem;
+          color: $candy-blue;
+        }
+
+        .comment-text {
+          color: #e2e8f0;
+        }
+      }
+    }
+
+    .comment-input-row {
+      display: flex;
+      gap: 0.5rem;
+
+      .comment-field {
+        flex: 1;
+        background: #111418;
+        border: 1px solid $border-color;
+        color: $text-light;
+        border-radius: 20px;
+        padding: 0.4rem 0.9rem;
+        outline: none;
+        font-size: 0.85rem;
+
+        &::placeholder {
+          color: $text-muted;
+        }
+
+        &:focus {
+          border-color: $candy-blue;
+        }
+      }
+
+      .btn-send-comment {
+        background: transparent;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+      }
     }
   }
 }

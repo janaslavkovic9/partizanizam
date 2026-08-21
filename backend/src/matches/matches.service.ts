@@ -1,52 +1,66 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
+export interface Match {
+  id: string;
+  opponent: string;
+  date: string;
+  time: string;
+  location: string;
+  competition: string;
+  isHome: boolean;
+  cafeName?: string;
+  lat?: number;
+  lng?: number;
+  status: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
+}
+
 @Injectable()
 export class MatchesService {
-  private matches: any[] = [
+  private matches: Match[] = [
     {
       id: '1',
-      homeTeam: 'KK Partizan',
-      awayTeam: 'Real Madrid',
-      dateTime: new Date('2026-10-15T20:30:00'),
+      opponent: 'Crvena zvezda',
+      date: '2026-09-15',
+      time: '20:00',
       location: 'Beogradska Arena',
-      score: { home: 88, away: 82 },
-      status: 'FINISHED',
-    },
-    {
-      id: '2',
-      homeTeam: 'Crvena Zvezda',
-      awayTeam: 'KK Partizan',
-      dateTime: new Date('2026-11-02T19:00:00'),
-      location: 'Hala Aleksandar Nikolić',
-      score: null,
-      status: 'UPCOMING',
+      competition: 'Evroliga',
+      isHome: true,
+      cafeName: 'Pivnica Partizanizam',
+      lat: 44.8155,
+      lng: 20.4590,
+      status: 'SCHEDULED',
     },
   ];
 
-  async findAll(): Promise<any[]> {
+  async findAll(): Promise<Match[]> {
     return this.matches;
   }
 
-  async findOne(id: string): Promise<any> {
-    const match = this.matches.find((m) => m.id === id);
-    if (!match) {
-      throw new NotFoundException('Utakmica nije pronađena');
-    }
-    return match;
-  }
-
-  async create(matchData: any): Promise<any> {
-    const newMatch = {
+  async create(createMatchDto: any): Promise<Match> {
+    const newMatch: Match = {
       id: Date.now().toString(),
-      homeTeam: matchData.homeTeam,
-      awayTeam: matchData.awayTeam,
-      dateTime: new Date(matchData.dateTime),
-      location: matchData.location || 'Glavna Arena',
-      score: null,
-      status: 'UPCOMING',
+      opponent: createMatchDto.opponent,
+      date: createMatchDto.date,
+      time: createMatchDto.time,
+      location: createMatchDto.location || 'Beogradska Arena',
+      competition: createMatchDto.competition || 'Evroliga',
+      isHome: createMatchDto.isHome ?? true,
+      cafeName: createMatchDto.cafeName || undefined,
+      lat: createMatchDto.lat || undefined,
+      lng: createMatchDto.lng || undefined,
+      status: 'SCHEDULED',
     };
 
     this.matches.unshift(newMatch);
     return newMatch;
+  }
+
+  async remove(id: string): Promise<{ success: boolean }> {
+    const index = this.matches.findIndex((m) => m.id === id);
+    if (index === -1) {
+      throw new NotFoundException('Utakmica nije pronađena.');
+    }
+    this.matches.splice(index, 1);
+    return { success: true };
   }
 }

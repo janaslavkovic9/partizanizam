@@ -1,37 +1,135 @@
-<div class="posts-container">
-  @if (authService.currentUser$ | async) {
-    <div class="create-post-card">
-      <input [(ngModel)]="title" placeholder="Naslov objave (opciono)..." class="form-input" />
-      <textarea [(ngModel)]="content" placeholder="Šta ima novo, Grobari?..." class="form-textarea" rows="3"></textarea>
-      <input [(ngModel)]="imageUrl" placeholder="Link do slike (opciono)..." class="form-input" />
-      <button (click)="createPost()" class="btn-submit" [disabled]="!content.trim()">Objavi</button>
-    </div>
-  }
-
-  <div class="posts-feed">
-    @for (post of posts; track post.id) {
-      <div class="post-card">
-        @if (post.imageUrl) {
-          <img [src]="post.imageUrl" alt="Objava slika" class="post-image" />
-        }
-        
-        <div class="post-header">
-          @if (post.title) {
-            <h2>{{ post.title }}</h2>
-          }
-          <span>Autor: {{ post.user?.username || 'Anoniman' }}</span>
-        </div>
-
-        <div class="post-content">
-          <p>{{ post.content }}</p>
-        </div>
-
-        @if ((authService.currentUser$ | async)?.id === post.user?.id) {
-          <button (click)="deletePost(post.id)" class="btn-delete" title="Obriši objavu">
-            🗑️ Obriši
-          </button>
-        }
+<div class="feed-container">
+  
+  <!-- FORMA ZA KREIRANJE OBJAVA -->
+  <div class="create-card" *ngIf="currentUser">
+    <div class="create-header">
+      <div class="user-avatar">
+        {{ (currentUser.username || 'U')[0].toUpperCase() }}
       </div>
-    }
+      <div class="header-title">
+        <h3>Podelite nešto sa zajednicom</h3>
+        <span class="user-handle">@{{ currentUser.username }}</span>
+      </div>
+    </div>
+
+    <div class="create-body">
+      <input 
+        [(ngModel)]="newTitle" 
+        type="text" 
+        class="input-title" 
+        placeholder="Naslov objave (opciono)..." 
+      />
+
+      <textarea 
+        [(ngModel)]="newContent" 
+        rows="3" 
+        class="input-content" 
+        placeholder="O čemu razmišljate danas?" 
+        required
+      ></textarea>
+
+      <div class="input-image-wrapper">
+        <span class="icon">🖼️</span>
+        <input 
+          [(ngModel)]="newImageUrl" 
+          type="text" 
+          class="input-image" 
+          placeholder="Unesite URL slike (https://...)" 
+        />
+      </div>
+
+      <!-- Preview slike ako je unet URL -->
+      <div class="image-preview" *ngIf="newImageUrl">
+        <img [src]="newImageUrl" alt="Preview" (error)="newImageUrl = ''" />
+        <button type="button" class="btn-remove-img" (click)="newImageUrl = ''">✕</button>
+      </div>
+    </div>
+
+    <div class="create-footer">
+      <button 
+        (click)="createPost()" 
+        class="btn-submit" 
+        [disabled]="!newContent.trim()"
+      >
+        <span>Objavi</span>
+        <span class="send-icon">🚀</span>
+      </button>
+    </div>
   </div>
+
+  <!-- LISTA OBJAVA -->
+  <div class="posts-feed">
+    <div class="post-card" *ngFor="let post of posts">
+      
+      <!-- Author Header -->
+      <div class="post-header">
+        <div class="author-badge">
+          <div class="avatar">
+            {{ (post.user?.username || post.author?.username || post.username || 'K')[0] | uppercase }}
+          </div>
+          <div class="info">
+            <span class="username">
+              {{ post.user?.username || post.author?.username || post.username || 'Korisnik' }}
+            </span>
+            <span class="date" *ngIf="post.createdAt">
+              {{ post.createdAt | date:'dd. MMM u HH:mm' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Dugme za brisanje (vidljivo samo autoru) -->
+        <button 
+          *ngIf="isAuthor(post)" 
+          class="btn-delete" 
+          (click)="deletePost(post.id, post)"
+          title="Obriši objavu"
+        >
+          🗑️
+        </button>
+      </div>
+
+      <!-- Post Content -->
+      <div class="post-body">
+        <h4 class="post-title" *ngIf="post.title">{{ post.title }}</h4>
+        <p class="post-text">{{ post.content }}</p>
+        
+        <div class="post-media" *ngIf="post.imageUrl">
+          <img [src]="post.imageUrl" alt="Media" />
+        </div>
+      </div>
+
+      <!-- Footer / Actions -->
+      <div class="post-footer">
+        <button (click)="likePost(post.id)" class="action-btn like-btn">
+          <span class="heart">❤️</span>
+          <span class="count">{{ post.likesCount || post.likes?.length || 0 }}</span>
+        </button>
+      </div>
+
+      <!-- Comments Block -->
+      <div class="comments-container">
+        <div class="comments-list" *ngIf="post.comments && post.comments.length > 0">
+          <div class="comment-bubble" *ngFor="let c of post.comments">
+            <span class="comment-author">
+              {{ c.user?.username || c.author?.username || c.username || 'Korisnik' }}:
+            </span>
+            <span class="comment-text">{{ c.content }}</span>
+          </div>
+        </div>
+
+        <div class="comment-input-row" *ngIf="currentUser">
+          <input 
+            [(ngModel)]="commentTextMap[post.id]" 
+            type="text" 
+            class="comment-field" 
+            placeholder="Napišite komentar..." 
+            (keyup.enter)="addComment(post.id)"
+          />
+          <button (click)="addComment(post.id)" class="btn-send-comment">💬</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div>

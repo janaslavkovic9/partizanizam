@@ -2,14 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { PostsService } from '../../services/posts.service';
+import { PostService } from '../../services/post.service';
 import * as PostsActions from './posts.actions';
 import { Post } from '../../models/post.model';
 
 @Injectable()
 export class PostsEffects {
   private actions$ = inject(Actions);
-  private postsService = inject(PostsService);
+  private postsService = inject(PostService);
 
   loadPosts$ = createEffect(() =>
     this.actions$.pipe(
@@ -17,8 +17,8 @@ export class PostsEffects {
       switchMap(() =>
         this.postsService.getPosts().pipe(
           map((posts: Post[]) => PostsActions.loadPostsSuccess({ posts })),
-          catchError((error) =>
-            of(PostsActions.loadPostsFailure({ error: error.message }))
+          catchError((error: any) =>
+            of(PostsActions.loadPostsFailure({ error: error?.message || 'Greška pri učitavanju' }))
           )
         )
       )
@@ -28,11 +28,11 @@ export class PostsEffects {
   createPost$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PostsActions.createPost),
-      switchMap(({ content }) =>
-        this.postsService.createPost(content).pipe(
+      switchMap(({ title, content, imageUrl }) =>
+        this.postsService.createPost({ title, content, imageUrl }).pipe(
           map((post: Post) => PostsActions.createPostSuccess({ post })),
-          catchError((error) =>
-            of(PostsActions.createPostFailure({ error: error.message }))
+          catchError((error: any) =>
+            of(PostsActions.createPostFailure({ error: error?.message || 'Greška pri kreiranju' }))
           )
         )
       )
@@ -43,7 +43,7 @@ export class PostsEffects {
     this.actions$.pipe(
       ofType(PostsActions.toggleLike),
       switchMap(({ postId }) =>
-        this.postsService.toggleLike(postId).pipe(
+        this.postsService.likePost(postId).pipe(
           map((post: Post) => PostsActions.toggleLikeSuccess({ post })),
           catchError(() => of({ type: '[Posts] Toggle Like Failure' }))
         )

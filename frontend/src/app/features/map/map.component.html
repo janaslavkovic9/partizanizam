@@ -1,0 +1,94 @@
+<div class="map-page-wrapper">
+  <div class="top-bar">
+    <button class="btn-back" (click)="goBackToMatches()">
+      <i class="bi bi-arrow-left"></i> Nazad na utakmice
+    </button>
+    <div class="title-info">
+      <h2>Lokacije za gledanje utakmice</h2>
+    </div>
+    <button class="btn-add" (click)="openAddModal()">
+      <i class="bi bi-plus-circle"></i> Dodaj novu lokaciju
+    </button>
+  </div>
+
+  <div class="main-content">
+    <div class="sidebar">
+      <h3 class="sidebar-title">Lokacije ({{ locations.length }})</h3>
+
+      <div *ngIf="locations.length === 0" class="no-locations">
+        Još nema dodatih lokacija za ovu utakmicu. Budi prvi i dodaj gde se gleda!
+      </div>
+
+      <div class="location-list">
+        <div 
+          *ngFor="let loc of locations" 
+          class="location-card"
+          [class.active]="selectedLocation?.id === loc.id"
+          (click)="selectLocation(loc)">
+          
+          <div class="card-header">
+            <h4>{{ loc.title }}</h4>
+            <span class="attendee-badge">
+              <i class="bi bi-people-fill"></i> {{ loc.attendees.length }}
+            </span>
+          </div>
+
+          <p class="address"><i class="bi bi-geo-alt"></i> {{ loc.address }}</p>
+          <p class="desc" *ngIf="loc.description">{{ loc.description }}</p>
+
+          <div class="card-actions" (click)="$event.stopPropagation()">
+            <button 
+              class="btn-attend" 
+              [class.joined]="isAttending(loc)"
+              (click)="toggleAttend(loc.id)">
+              <i class="bi" [ngClass]="isAttending(loc) ? 'bi-check-circle-fill' : 'bi-plus-circle'"></i>
+              {{ isAttending(loc) ? 'Dolazim!' : 'Potvrdi dolazak' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-container">
+      <div id="match-map"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showAddModal">
+    <div class="modal-card">
+      <h3>Dodaj lokaciju za gledanje</h3>
+      <p class="modal-subtitle">Klikni na mapu da izabereš tačne koordinate ili unesi ručno.</p>
+
+      <div class="form-group">
+        <label>Naziv lokacije / Kafića</label>
+        <input [(ngModel)]="newTitle" type="text" placeholder="npr. Pivnica Partizan" />
+      </div>
+
+      <div class="form-group">
+        <label>Adresa</label>
+        <input [(ngModel)]="newAddress" type="text" placeholder="npr. Knez Mihailova 12" />
+      </div>
+
+      <div class="form-group">
+        <label>Opis / Napomena</label>
+        <textarea [(ngModel)]="newDescription" rows="2" placeholder="npr. Rezervisana 2 stola na ime Marko"></textarea>
+      </div>
+
+      <div class="row-coords">
+        <div class="form-group">
+          <label>Geo Lat</label>
+          <input [(ngModel)]="newLat" type="number" step="0.0001" />
+        </div>
+        <div class="form-group">
+          <label>Geo Lng</label>
+          <input [(ngModel)]="newLng" type="number" step="0.0001" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeAddModal()">Otkazi</button>
+        <button class="btn-save" (click)="saveLocation()">Sačuvaj lokaciju</button>
+      </div>
+    </div>
+  </div>
+</div>
