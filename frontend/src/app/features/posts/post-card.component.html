@@ -1,0 +1,39 @@
+<div class="post-card" *ngIf="post">
+  <div class="post-header">
+    <div class="user-info">
+      <span class="author-name">{{ post.user?.username || 'Anoniman autor' }}</span>
+    </div>
+    <button *ngIf="isAuthor()" (click)="onDelete()" class="btn-delete" title="Obriši objavu">✕</button>
+  </div>
+
+  <h3 class="post-title" *ngIf="post.title">{{ post.title }}</h3>
+  <p class="post-content">{{ post.content }}</p>
+
+  <div class="post-image" *ngIf="post.imageUrl">
+    <img [src]="post.imageUrl" alt="Post slika" />
+  </div>
+
+  <div class="post-actions">
+    <button (click)="onLike()" class="btn-like">
+      ❤️ {{ post.likes || 0 }}
+    </button>
+  </div>
+
+  <div class="comments-section">
+    <div class="comments-list" *ngIf="post.comments && post.comments.length > 0">
+      <div class="comment" *ngFor="let comment of post.comments">
+        <strong>{{ comment.user?.username || 'Korisnik' }}:</strong> {{ comment.content || comment.text }}
+      </div>
+    </div>
+
+    <div class="add-comment-box">
+      <input 
+        type="text" 
+        [(ngModel)]="commentText" 
+        placeholder="Napiši komentar..." 
+        (keyup.enter)="onAddComment()"
+      />
+      <button (click)="onAddComment()" class="btn-send-comment">Pošalji</button>
+    </div>
+  </div>
+</div>

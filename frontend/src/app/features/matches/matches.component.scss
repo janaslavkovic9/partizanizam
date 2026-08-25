@@ -1,81 +1,273 @@
-.matches-page {
+.matches-container {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  padding: 1.5rem;
+  color: var(--color-text-main, #e2e8f0);
 }
 
-.create-card {
-  background-color: var(--color-onyx-card);
-  border: 1px solid var(--color-onyx-border);
+.card {
+  background-color: var(--color-onyx-card, #161920);
+  border: 1px solid var(--color-onyx-border, #2a2e39);
   padding: 1.5rem;
   border-radius: 12px;
-  color: var(--color-text-main);
 }
 
-.create-card h3 {
-  margin-top: 0;
-  color: var(--color-candy-blue);
+.card-header-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+    color: var(--color-candy-blue, #00D2FF);
+  }
+
+  .btn-toggle {
+    background: var(--color-onyx-dark, #0f1115);
+    border: 1px solid var(--color-onyx-border, #2a2e39);
+    color: var(--color-candy-blue, #00D2FF);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+}
+
+.form-body {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+
+  .form-group {
+    flex: 1;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  label {
+    font-size: 0.85rem;
+    color: var(--color-text-muted, #94a3b8);
+  }
 }
 
 .input-field {
   width: 100%;
   padding: 0.75rem;
-  background-color: var(--color-onyx-dark);
-  border: 1px solid var(--color-onyx-border);
+  background-color: var(--color-onyx-dark, #0f1115);
+  border: 1px solid var(--color-onyx-border, #2a2e39);
   border-radius: 6px;
-  color: var(--color-text-main);
-  margin-bottom: 0.75rem;
+  color: var(--color-text-main, #f8fafc);
   box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-candy-blue, #00D2FF);
+  }
 }
 
-.input-field:focus {
-  outline: none;
-  border-color: var(--color-candy-blue);
+.btn-map {
+  background-color: rgba(0, 210, 255, 0.1);
+  border: 1px dashed var(--color-candy-blue, #00D2FF);
+  color: var(--color-candy-blue, #00D2FF);
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
 }
 
 .btn-submit {
-  background-color: var(--color-candy-blue);
+  background-color: var(--color-candy-blue, #00D2FF);
   color: #000000;
   border: none;
-  padding: 0.6rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   font-weight: bold;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.match-card {
-  background-color: var(--color-onyx-card);
-  border: 1px solid var(--color-onyx-border);
-  padding: 1.25rem;
-  border-radius: 12px;
-  color: var(--color-text-main);
-  margin-bottom: 1rem;
-}
-
-.match-details {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.match-details h3 {
+.error-text {
+  color: #ef4444;
+  font-weight: bold;
   margin: 0;
 }
 
-.score-badge {
-  background-color: var(--color-onyx-dark);
-  color: var(--color-candy-blue);
-  border: 1px solid var(--color-candy-blue);
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  box-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
+.calendar-card {
+  background-color: var(--color-onyx-card, #161920);
+  border: 1px solid var(--color-onyx-border, #2a2e39);
+  border-radius: 12px;
+  padding: 1.5rem;
 }
 
-.location-text {
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0;
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h4 {
+    margin: 0;
+    color: #ffffff;
+  }
+
+  .btn-nav {
+    background: var(--color-onyx-dark, #0f1115);
+    border: 1px solid var(--color-onyx-border, #2a2e39);
+    color: var(--color-candy-blue, #00D2FF);
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.weekday-header {
+  text-align: center;
+  font-weight: bold;
+  color: #64748b;
+  font-size: 0.85rem;
+  padding-bottom: 6px;
+}
+
+.calendar-day {
+  background-color: var(--color-onyx-dark, #0f1115);
+  border: 1px solid var(--color-onyx-border, #2a2e39);
+  border-radius: 8px;
+  min-height: 80px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &.has-match {
+    background-color: rgba(0, 210, 255, 0.05);
+    border-color: rgba(0, 210, 255, 0.4);
+  }
+
+  .day-number {
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+}
+
+.match-list-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.match-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.match-badge {
+  background-color: var(--color-candy-blue, #00D2FF);
+  color: #000;
+  font-size: 0.65rem;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.map-link-btn {
+  font-size: 0.6rem;
+  color: var(--color-candy-blue, #00D2FF);
+  text-decoration: none;
+}
+
+.btn-delete-small {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0;
+  align-self: flex-end;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.modal-content {
+  background-color: var(--color-onyx-card, #161920);
+  border: 1px solid var(--color-onyx-border, #2a2e39);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 500px;
+
+  h4 {
+    margin-top: 0;
+    color: #fff;
+  }
+
+  #picker-map {
+    height: 300px;
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .btn-cancel {
+    background: transparent;
+    border: 1px solid var(--color-onyx-border, #2a2e39);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .btn-confirm {
+    background: var(--color-candy-blue, #00D2FF);
+    border: none;
+    color: #000;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 }

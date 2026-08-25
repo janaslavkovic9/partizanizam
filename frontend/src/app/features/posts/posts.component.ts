@@ -1,6 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject, zip, merge } from 'rxjs';
+import { takeUntil, take } from 'rxjs/operators';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { Post, User } from '../../models/post.model';
@@ -12,9 +14,11 @@ import { Post, User } from '../../models/post.model';
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss']
 })
-export class PostsComponent implements OnInit {
+export class PostsComponent implements OnInit, OnDestroy {
   private postService = inject(PostService);
   public authService = inject(AuthService);
+
+  private destroy$ = new Subject<void>();
 
   posts: Post[] = [];
   currentUser: User | null = null;
@@ -23,22 +27,45 @@ export class PostsComponent implements OnInit {
   newContent: string = '';
   newImageUrl: string = '';
 
-  commentTextMap: { [postId: string]: string } = {};
+  commentTextMap: { [key: string]: string } = {};
 
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-    });
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.currentUser = user;
+      });
+
     this.loadPosts();
+    this.setupStreamListeners();
   }
 
   loadPosts(): void {
-    this.postService.getPosts().subscribe({
-      next: (data) => {
-        this.posts = data;
-      },
-      error: (err) => console.error('Greška pri učitavanju objava:', err)
-    });
+    zip(
+      this.postService.getPosts(),
+      this.authService.currentUser$.pipe(take(1))
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ([postsData, userData]) => {
+          this.posts = postsData;
+          if (userData && !this.currentUser) {
+            this.currentUser = userData;
+          }
+        },
+        error: (err) => console.error('Greška pri učitavanju objava:', err)
+      });
+  }
+
+  setupStreamListeners(): void {
+    const posts$ = this.postService.getPosts();
+    const user$ = this.authService.currentUser$;
+
+    merge(posts$, user$)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {}
+      });
   }
 
   createPost(): void {
@@ -51,20 +78,22 @@ export class PostsComponent implements OnInit {
       user: this.currentUser || undefined
     };
 
-    this.postService.createPost(payload).subscribe({
-      next: (post) => {
-        const createdPost: Post = {
-          ...post,
-          user: post.user?.username ? post.user : (this.currentUser ? this.currentUser : undefined)
-        };
+    this.postService.createPost(payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (post) => {
+          const createdPost: Post = {
+            ...post,
+            user: post.user?.username ? post.user : (this.currentUser ? this.currentUser : undefined)
+          };
 
-        this.posts.unshift(createdPost);
-        this.newTitle = '';
-        this.newContent = '';
-        this.newImageUrl = '';
-      },
-      error: (err) => console.error('Greška pri kreiranju objave:', err)
-    });
+          this.posts.unshift(createdPost);
+          this.newTitle = '';
+          this.newContent = '';
+          this.newImageUrl = '';
+        },
+        error: (err) => console.error('Greška pri kreiranju objave:', err)
+      });
   }
 
   isAuthor(post: Post): boolean {
@@ -73,44 +102,63 @@ export class PostsComponent implements OnInit {
     return authorUsername === this.currentUser.username;
   }
 
-  deletePost(postId: string, post: Post): void {
-    if (!this.isAuthor(post)) return;
-
+  deletePost(postId: string, post?: Post): void {
     if (confirm('Da li ste sigurni da želite da obrišete ovu objavu?')) {
-      this.postService.deletePost(postId).subscribe({
-        next: () => {
-          this.posts = this.posts.filter(p => p.id !== postId);
-        },
-        error: (err) => console.error('Greška pri brisanju objave:', err)
-      });
+      this.postService.deletePost(postId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.posts = this.posts.filter(p => p.id !== postId);
+          },
+          error: (err) => console.error('Greška pri brisanju objave:', err)
+        });
     }
   }
 
   likePost(postId: string): void {
-    this.postService.likePost(postId).subscribe({
-      next: (updatedPost) => {
-        const index = this.posts.findIndex(p => p.id === postId);
-        if (index !== -1) {
-          this.posts[index] = updatedPost;
-        }
-      },
-      error: (err) => console.error('Greška pri lajkovanju:', err)
-    });
+    this.postService.likePost(postId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (updatedPost) => {
+          const index = this.posts.findIndex(p => p.id === postId);
+          if (index !== -1) {
+            this.posts[index] = updatedPost;
+          }
+        },
+        error: (err) => console.error('Greška pri lajkovanju:', err)
+      });
   }
 
-  addComment(postId: string): void {
-    const text = this.commentTextMap[postId];
-    if (!text || !text.trim()) return;
+  addComment(postIdOrEvent: string | { postId: string; text: string }): void {
+    let postId: string;
+    let text: string;
 
-    this.postService.addComment(postId, text.trim()).subscribe({
-      next: (updatedPost) => {
-        const index = this.posts.findIndex(p => p.id === postId);
-        if (index !== -1) {
-          this.posts[index] = updatedPost;
-        }
-        this.commentTextMap[postId] = '';
-      },
-      error: (err) => console.error('Greška pri dodavanju komentara:', err)
-    });
+    if (typeof postIdOrEvent === 'object') {
+      postId = postIdOrEvent.postId;
+      text = postIdOrEvent.text;
+    } else {
+      postId = postIdOrEvent;
+      text = this.commentTextMap[postId]?.trim() || '';
+    }
+
+    if (!text) return;
+
+    this.postService.addComment(postId, text)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (updatedPost) => {
+          const index = this.posts.findIndex(p => p.id === postId);
+          if (index !== -1) {
+            this.posts[index] = updatedPost;
+          }
+          this.commentTextMap[postId] = '';
+        },
+        error: (err) => console.error('Greška pri dodavanju komentara:', err)
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

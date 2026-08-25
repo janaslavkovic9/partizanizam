@@ -9,6 +9,7 @@ export interface User {
 export interface Comment {
   id: string;
   content: string;
+  text?: string;
   createdAt: Date | string;
   username?: string;
   user?: User;

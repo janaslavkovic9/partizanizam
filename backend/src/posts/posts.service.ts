@@ -6,9 +6,9 @@ export class PostsService {
     {
       id: '1',
       title: 'Dobrodošlica',
-      content: 'Dobrodošli na mrežu! Ovo je prva zvanična objava.',
+      content: 'Dobrodošli na mrežu! ',
       createdAt: new Date(),
-      user: { id: '101', username: 'OnyxAdmin' },
+      user: { id: '101', username: 'Admin' },
       likes: [],
       comments: [
         {
@@ -19,16 +19,7 @@ export class PostsService {
           createdAt: new Date(),
         },
       ],
-    },
-    {
-      id: '2',
-      title: 'Testiranje',
-      content: 'Testing Angular + NestJS integracije. Sve radi u realnom vremenu!',
-      createdAt: new Date(),
-      user: { id: '102', username: 'Developer' },
-      likes: [],
-      comments: [],
-    },
+    }
   ];
 
   async findAll(): Promise<any[]> {

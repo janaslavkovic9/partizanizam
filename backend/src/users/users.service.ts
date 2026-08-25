@@ -11,8 +11,14 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(userData: { username: string; email: string; password?: string }): Promise<User> {
-    const { username, email, password } = userData;
+  async create(userData: { 
+    username: string; 
+    email: string; 
+    password?: string; 
+    passwordHash?: string; 
+    role?: UserRole | string 
+  }): Promise<User> {
+    const { username, email, password, passwordHash, role } = userData;
 
     const existingUser = await this.userRepository.findOne({
       where: [{ email }, { username }],
@@ -22,17 +28,17 @@ export class UsersService {
       throw new ConflictException('Korisnik sa ovim email-om ili korisničkim imenom već postoji.');
     }
 
-    let hashedPassword = '';
-    if (password) {
+    let finalPasswordHash = passwordHash || '';
+    if (password && !passwordHash) {
       const saltRounds = 10;
-      hashedPassword = await bcrypt.hash(password, saltRounds);
+      finalPasswordHash = await bcrypt.hash(password, saltRounds);
     }
 
     const user = this.userRepository.create({
       username,
       email,
-      passwordHash: hashedPassword,
-      role: UserRole.USER,
+      passwordHash: finalPasswordHash,
+      role: (role as UserRole) || UserRole.USER,
     });
 
     return this.userRepository.save(user);
